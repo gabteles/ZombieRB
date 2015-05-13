@@ -1,0 +1,41 @@
+A is a zombie
+summon
+	remember 121
+bind
+
+B is a zombie
+summon
+	remember 33
+bind
+
+C is a zombie
+summon
+	remember 0
+bind
+
+D is a zombie
+summon 
+	remember 1
+bind
+
+Euclides is a zombie
+summon
+	task DoMDC
+		remember moan B
+		shamble
+			remember C moan A
+			remember A moan B
+			
+			remember D rend moan A moan C
+			shamble
+				remember C moan C turn moan B
+				remember D moan D -1
+			until remembering D 0
+			
+			remember B moan C
+			remember moan B
+		until remembering 0
+		
+		say moan A
+	animate
+animate

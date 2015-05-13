@@ -11,6 +11,7 @@
 # to read the specification, which was made over two years ago, and still nobody
 # dared implement it.
 
+
 STDOUT.sync = true
 Thread.abort_on_exception = true
 # import re,sys,thread,time,random
@@ -78,7 +79,6 @@ class Entity
 		@memory = nil
 		@tasks = []
 		@active = false
-		puts "DEBUG: New Entity (#{self.class})"
 	end
 	
 	def runtasks
@@ -113,14 +113,13 @@ class Zombie < Undead
    
 	# zombies run their tasks in order
 	def taskthread
-		puts "DEBUG: Zombie taskthread running from Thread #{Thread.current.object_id}"
 		while self.active and (!$kill)
 			self.tasks.select(&:active).each do |task| #for task in [t for t in self.tasks if t.active]:
 				break unless self.active #if not self.active: break
 				task.run()
 				task.active = false
 			end
-			puts "#{Thread.current.object_id} sleeping"
+			
 			sleep(0.05)
 			self.active = false if self.tasks.select(&:active).empty? #if not [t for t in self.tasks if t.active]: 
 		end
@@ -349,7 +348,6 @@ class Task
 		
 		#for i in range(0,len(values)): stack.pop()
 		values.size.times { stack.pop }
-		puts("DEBUG: #{theEntity.name} <- #{total}")
 		theEntity.memory = total
 	end
   
@@ -402,7 +400,6 @@ class Task
 					if stack.size > 0
 						if stack.last.is_a?(Entity)
 							if stack.size > 1
-								puts("DEBUG: #{stack.last.memory} == #{stack[-2]}")
 								val = stack.last.memory == stack[-2] ? 1 : 0
 								stack.pop()
 								stack.pop()
@@ -411,7 +408,6 @@ class Task
 								die("task %s, entity %s: argument error for REMEMBERING." % [self.name, self.entity.name])
 							end
 						else
-							puts("DEBUG: #{stack.last} == #{self.entity.memory}")
 							stack.push(stack.pop() == self.entity.memory ? 1 : 0)
 						end
 					else
@@ -455,7 +451,6 @@ class Task
 								t += 1 if ['around', 'until'].include?(line)
 								t -= 1 if (line == 'shamble')
 							end
-							puts("DEBUG: Back to line #{line_no}")
 							#break
 						rescue
 							die("task %s, entity %s: unbalanced loop." % [self.name, self.entity.name])
@@ -562,7 +557,7 @@ class Environment
       
 		line_no = 0
 		while (line_no < lines.size)
-			print "LINE : '%s'\n" % lines[line_no]
+			#print "LINE : '%s'\n" % lines[line_no]
 			line = lines[line_no]
 			
 			if !inEntity
@@ -664,5 +659,7 @@ class Environment
 	end
 end
 
-env = Environment.new("Z:\\Users\\Gabriel\\Desktop\\Backup\\Zombie\\EuclidesMDC.zb")
-env.run()
+if __FILE__ == $0
+	env = Environment.new(ARGV.first)
+	env.run()
+end
